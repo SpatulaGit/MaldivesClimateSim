@@ -1,5 +1,4 @@
-// script.js
-
+// ================= UI =================
 const yearEl = document.getElementById("year");
 const seaEl = document.getElementById("sea");
 const tempEl = document.getElementById("temp");
@@ -12,6 +11,44 @@ const water = document.getElementById("water");
 let year = 2026;
 let running = false;
 
+// ================= SLIDESHOW =================
+const images = [
+  "images/intro/1.jpg",
+  "images/intro/2.jpg",
+  "images/intro/3.jpg",
+  "images/intro/4.jpg",
+  "images/intro/5.jpg",
+  "images/intro/6.jpg"
+];
+
+const slides = document.querySelectorAll(".slide");
+
+let index = 0;
+
+slides[0].style.backgroundImage = `url('${images[0]}')`;
+slides[1].style.backgroundImage = `url('${images[1]}')`;
+
+slides[0].classList.add("active");
+
+function nextSlide(){
+
+  const active = index % 2;
+  const next = (index + 1) % 2;
+
+  const nextImageIndex = (index + 1) % images.length;
+
+  slides[next].style.backgroundImage =
+    `url('${images[nextImageIndex]}')`;
+
+  slides[next].classList.add("active");
+  slides[active].classList.remove("active");
+
+  index = nextImageIndex;
+}
+
+setInterval(nextSlide, 4000);
+
+// ================= CONSTANTS =================
 const SEA_START = 0.55;
 const SEA_END = 0.90;
 
@@ -20,202 +57,111 @@ const TEMP_END = 31.5;
 
 const YEARS = 74;
 
-/* VISUAL MODEL */
+// ================= MODELS =================
 function visualModel(t){
-
   return {
-
-    sea:
-      SEA_START +
-      (SEA_END - SEA_START) * t,
-
-    temp:
-      TEMP_START +
-      (TEMP_END - TEMP_START) * t
+    sea: SEA_START + (SEA_END - SEA_START) * t,
+    temp: TEMP_START + (TEMP_END - TEMP_START) * t
   };
 }
 
-/* GRAPH MODEL */
 function graphModel(t){
-
   return {
-
-    sea:
-      SEA_START +
-      (SEA_END - SEA_START) *
-      Math.pow(t, 1.6),
-
-    temp:
-      TEMP_START +
-      (TEMP_END - TEMP_START) *
-      Math.pow(t, 1.8)
+    sea: SEA_START + (SEA_END - SEA_START) * Math.pow(t, 1.7),
+    temp: TEMP_START + (TEMP_END - TEMP_START) * Math.pow(t, 1.4)
   };
 }
 
-/* WATER HEIGHT */
+// ================= CORAL =================
+function coralModel(temp){
+
+  let heatStress = Math.max(0, temp - 28.5);
+
+  // normalize against MAX expected heat stress (not 3.2)
+  let maxStress = 3.0; // calibrated to your 2100 endpoint
+
+  let x = Math.min(1, heatStress / maxStress);
+
+  // stronger curve so early years don't spike too fast
+  let normalized = Math.pow(x, 1.6);
+
+  let mortality = normalized * 57;
+  let survival = 100 - mortality;
+
+  // force exact economic endpoint alignment
+  let cost = normalized * 1100;
+
+  return { mortality, survival, cost };
+}
+
+// ================= WATER =================
 function waterHeight(sea){
-
-  let p =
-    (sea - SEA_START) /
-    (SEA_END - SEA_START);
-
+  let p = (sea - SEA_START) / (SEA_END - SEA_START);
   return 38 + p * 25;
 }
 
-/* CORAL MODEL */
-function coralModel(temp){
-
-  /* bleaching begins earlier */
-  let heatStress =
-    Math.max(0, temp - 28.5);
-
-  /*
-    Evidence target:
-    ~57% mortality
-    at ~31.5°C
-  */
-
-  let mortality =
-    Math.min(
-      57,
-      Math.pow(heatStress / 3.0, 1.9) * 57
-    );
-
-  /* survival directly tied */
-  let survival =
-    100 - mortality;
-
-  /* economic damage scaling */
-  let cost =
-    (mortality / 57) * 1100;
-
-  return {
-    mortality,
-    survival,
-    cost
-  };
-}
-
-/* MONEY */
-function formatMoney(m){
-
-  return "$" +
-    m.toFixed(0) +
-    "M";
-}
-
-/* CHARTS */
-
-const seaChart =
-new Chart(
-  document.getElementById("seaChart"),
-  {
-    type:"line",
-
-    data:{
-      labels:[],
-
-      datasets:[{
-        label:"Sea Level Rise (m)",
-        data:[],
-        borderColor:"#38bdf8",
-        tension:0.3
-      }]
-    }
+// ================= GRAPHS =================
+const seaChart = new Chart(document.getElementById("seaChart"), {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Sea Level (m)",
+      data: [],
+      borderColor: "blue",
+      tension: 0.3
+    }]
   }
-);
+});
 
-const tempChart =
-new Chart(
-  document.getElementById("tempChart"),
-  {
-    type:"line",
-
-    data:{
-      labels:[],
-
-      datasets:[{
-        label:"Ocean Temperature (°C)",
-        data:[],
-        borderColor:"#f97316",
-        tension:0.3
-      }]
-    }
+const tempChart = new Chart(document.getElementById("tempChart"), {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [{
+      label: "Temperature (°C)",
+      data: [],
+      borderColor: "orange",
+      tension: 0.3
+    }]
   }
-);
+});
 
-/* MAIN LOOP */
-
+// ================= LOOP =================
 function step(){
 
   if(year > 2100) return;
 
-  let t =
-    (year - 2026) / YEARS;
+  let t = (year - 2026) / YEARS;
 
-  let vis =
-    visualModel(t);
+  let vis = visualModel(t);
+  let graph = graphModel(t);
 
-  let graph =
-    graphModel(t);
+  let { mortality, survival, cost } = coralModel(vis.temp);
 
-  let {
-    mortality,
-    survival,
-    cost
-  } = coralModel(vis.temp);
+  yearEl.textContent = year;
+  seaEl.textContent = vis.sea.toFixed(2);
+  tempEl.textContent = vis.temp.toFixed(2);
 
-  /* UI */
+  coralEl.textContent = survival.toFixed(1);
+  costEl.textContent = "$" + cost.toFixed(0) + "M";
 
-  yearEl.textContent =
-    year;
+  water.style.height = `${waterHeight(vis.sea)}%`;
 
-  seaEl.textContent =
-    vis.sea.toFixed(2);
-
-  tempEl.textContent =
-    vis.temp.toFixed(2);
-
-  coralEl.textContent =
-    survival.toFixed(1);
-
-  costEl.textContent =
-    formatMoney(cost);
-
-  /* WATER */
-
-  water.style.height =
-    `${waterHeight(vis.sea)}%`;
-
-  /* =========================
-     IMPROVED END BLEACHING
-  ========================= */
-
-  let intensity =
-    mortality / 100;
+  let intensity = mortality / 57;
 
   coralImg.style.filter = `
     saturate(${1 - intensity * 1.4})
-    brightness(${1 - intensity * 0.45})
-    contrast(${1 - intensity * 0.55})
-    grayscale(${intensity * 0.45})
+    brightness(${1 - intensity * 0.5})
+    contrast(${1 - intensity * 0.6})
+    grayscale(${intensity * 0.5})
   `;
 
-  /* keeps some coral visible */
-  coralImg.style.opacity =
-    `${1 - intensity * 0.35}`;
-
-  /* GRAPHS */
-
   seaChart.data.labels.push(year);
-
-  seaChart.data.datasets[0]
-    .data.push(graph.sea);
+  seaChart.data.datasets[0].data.push(graph.sea);
 
   tempChart.data.labels.push(year);
-
-  tempChart.data.datasets[0]
-    .data.push(graph.temp);
+  tempChart.data.datasets[0].data.push(graph.temp);
 
   seaChart.update();
   tempChart.update();
@@ -223,18 +169,17 @@ function step(){
   year++;
 
   if(running){
-
     setTimeout(step, 500);
   }
 }
 
-document
-  .getElementById("startBtn")
-  .onclick = () => {
+// ================= START =================
+document.getElementById("enterBtn").onclick = () => {
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("app").style.opacity = "1";
+};
 
-    running = !running;
-
-    if(running){
-      step();
-    }
+document.getElementById("startBtn").onclick = () => {
+  running = !running;
+  if(running) step();
 };

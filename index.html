@@ -1,16 +1,38 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Maldives Climate Impact Simulation</title>
+  <title>Maldives Climate Simulation</title>
 
   <link rel="stylesheet" href="style.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
+
+<!-- ================= INTRO ================= -->
+<div id="intro">
+
+  <div id="slideshow">
+    <div class="slide active"></div>
+    <div class="slide"></div>
+  </div>
+
+  <div class="intro-content">
+    <h1>Maldives Climate Impact Simulation</h1>
+    <p>Rising seas • Coral bleaching • Economic risk</p>
+    <button id="enterBtn">Enter Simulation</button>
+  </div>
+
+  <div class="intro-credit">
+    Source: Earth.org satellite imagery (Maldives)
+  </div>
+
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app">
 
 <header>
   <h1>Maldives Climate Impact Simulation (2026–2100)</h1>
@@ -19,85 +41,58 @@
 
 <main class="container">
 
-  <!-- LIVE DATA -->
   <section class="panel">
     <h2>Live Climate Indicators</h2>
 
     <ul class="stats">
       <li>Year: <span id="year">2026</span></li>
-      <li>Sea level rise: <span id="sea">0.55</span> m</li>
-      <li>Ocean temperature: <span id="temp">28.0</span> °C</li>
-      <li>Coral survival rate: <span id="coral">100</span>%</li>
+      <li>Sea level: <span id="sea">0.55</span> m</li>
+      <li>Temperature: <span id="temp">28.0</span> °C</li>
+      <li>Coral survival: <span id="coral">100</span>%</li>
       <li>Economic damage: <span id="cost">$0M</span></li>
     </ul>
   </section>
 
-  <!-- VISUAL -->
   <section class="panel">
-
     <div class="scene">
 
       <img src="images/main.png" class="bg"/>
       <img src="images/coral.png" id="coralLayer"/>
+
       <div id="water"></div>
 
     </div>
-
   </section>
 
-  <!-- GRAPHS -->
   <section class="panel">
-
     <h2>Sea Level Rise</h2>
     <canvas id="seaChart"></canvas>
 
     <h2>Ocean Temperature</h2>
     <canvas id="tempChart"></canvas>
-
   </section>
 
-  <!-- SOURCES -->
   <section class="panel">
     <h2>Sources</h2>
 
-    <ul class="sources">
-
-      <li>IPCC AR6 (2021–2023) – Climate Change 2021: The Physical Science Basis</li>
-
-      <li>NASA Global Climate Change – Global temperature datasets and long-term trends</li>
-
-      <li>NOAA Sea Level Trends – Observed and projected sea level rise data</li>
-
-      <li>Rahmstorf (2007) – Semi-empirical sea level rise modeling</li>
-
-      <li>Church & Clark (2013) – Sea level rise projections under emission scenarios</li>
-
-      <li>Springer Nature – Coral bleaching thresholds and thermal stress research</li>
-
-      <li>UNEP – Coral reef ecosystem vulnerability reports</li>
-
-      <li>World Bank – Maldives climate risk and economic exposure assessments</li>
-
-      <li>World Bank – Maldives Climate Risk Assessments</li>
-
-      <li>IPCC AR6 – Sea Level Rise Projections</li>
-
-      <li>USGS – Coral Reef Ecosystem Studies</li>
-
-      <li>UNDP – Coastal Economic Impact Reports</li>
-
-      <li>Springer Nature – Coral Bleaching & Thermal Stress</li>
-
-      <li>MetLink – Island Elevation Data</li>
-
-      <li>US Embassy – Tourism GDP Statistics</li>
-
-      <li>NCA – Fisheries Economic Data</li>
-
+    <ul>
+      <li>IPCC AR6 Climate Report</li>
+      <li>NASA Global Climate Data</li>
+      <li>NOAA Sea Level Trends</li>
+      <li>World Bank Group Maldives Risk Assessment</li>
+      <li>MetLink Island Vulnerability Studies</li>
+      <li>Springer Nature Coral Bleaching Research</li>
+      <li>USGS Coral Reef Coastal Protection</li>
+      <li>UNDP Coastal Economic Value (~$442M)</li>
+      <li>US Embassy Maldives Economic Data</li>
+      <li>NCA Fisheries Economic Contribution</li>
     </ul>
+
   </section>
 
 </main>
+
+</div>
 
 <script src="script.js"></script>
 
