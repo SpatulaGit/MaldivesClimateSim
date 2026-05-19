@@ -8,6 +8,8 @@ const costEl = document.getElementById("cost");
 const coralImg = document.getElementById("coralLayer");
 const water = document.getElementById("water");
 
+const startBtn = document.getElementById("startBtn");
+
 let year = 2026;
 let running = false;
 
@@ -33,13 +35,16 @@ const images = [
 ];
 
 const slides = document.querySelectorAll(".slide");
+
 let index = 0;
 
 slides[0].style.backgroundImage = `url('${images[0]}')`;
 slides[1].style.backgroundImage = `url('${images[1]}')`;
+
 slides[0].classList.add("active");
 
 function nextSlide() {
+
   const active = index % 2;
   const next = (index + 1) % 2;
 
@@ -66,21 +71,26 @@ const YEARS = 74;
 
 // ================= MODELS =================
 function visualModel(t) {
+
   return {
     sea: SEA_START + (SEA_END - SEA_START) * t,
     temp: TEMP_START + (TEMP_END - TEMP_START) * t
   };
+
 }
 
 function graphModel(t) {
+
   return {
     sea: SEA_START + (SEA_END - SEA_START) * Math.pow(t, 1.7),
     temp: TEMP_START + (TEMP_END - TEMP_START) * Math.pow(t, 1.4)
   };
+
 }
 
 // ================= CORAL MODEL =================
 function coralModel(temp) {
+
   let heatStress = Math.max(0, temp - 28.5);
   let maxStress = 3.0;
 
@@ -96,13 +106,17 @@ function coralModel(temp) {
 
 // ================= WATER =================
 function waterHeight(sea) {
+
   let p = (sea - SEA_START) / (SEA_END - SEA_START);
+
   return 38 + p * 25;
 }
 
 // ================= GRAPHS =================
 const seaChart = new Chart(document.getElementById("seaChart"), {
+
   type: "line",
+
   data: {
     labels: [],
     datasets: [{
@@ -112,10 +126,13 @@ const seaChart = new Chart(document.getElementById("seaChart"), {
       tension: 0.3
     }]
   }
+
 });
 
 const tempChart = new Chart(document.getElementById("tempChart"), {
+
   type: "line",
+
   data: {
     labels: [],
     datasets: [{
@@ -125,24 +142,77 @@ const tempChart = new Chart(document.getElementById("tempChart"), {
       tension: 0.3
     }]
   }
+
 });
+
+// ================= RESET FUNCTION =================
+function resetSimulation() {
+
+  year = 2026;
+  running = false;
+
+  // reset text
+  yearEl.textContent = "2026";
+  seaEl.textContent = "0.55";
+  tempEl.textContent = "28.0";
+  coralEl.textContent = "100";
+  costEl.textContent = "$0M";
+
+  // reset water
+  water.style.height = `38%`;
+
+  // reset coral
+  coralImg.style.filter = `
+    saturate(1)
+    brightness(1)
+    contrast(1)
+    grayscale(0)
+  `;
+
+  coralImg.style.opacity = `1`;
+
+  // clear charts
+  seaChart.data.labels = [];
+  seaChart.data.datasets[0].data = [];
+
+  tempChart.data.labels = [];
+  tempChart.data.datasets[0].data = [];
+
+  seaChart.update();
+  tempChart.update();
+
+  // button text
+  startBtn.textContent = "▶ Start";
+}
 
 // ================= LOOP =================
 function step() {
-  if (year > 2100) return;
+
+  // END SIMULATION
+  if (year > 2100) {
+
+    running = false;
+    startBtn.textContent = "↺ Reset Simulation";
+
+    return;
+  }
 
   let t = (year - 2026) / YEARS;
 
   let vis = visualModel(t);
   let graph = graphModel(t);
 
-  let { mortality, survival, cost, normalized } = coralModel(vis.temp);
+  let { mortality, survival, cost } = coralModel(vis.temp);
 
   // ================= UI =================
   yearEl.textContent = year;
+
   seaEl.textContent = vis.sea.toFixed(2);
+
   tempEl.textContent = vis.temp.toFixed(2);
+
   coralEl.textContent = survival.toFixed(1);
+
   costEl.textContent = "$" + cost.toFixed(0) + "M";
 
   // ================= WATER =================
@@ -177,14 +247,31 @@ function step() {
   }
 }
 
-// ================= INTRO / START =================
+// ================= INTRO =================
 document.getElementById("enterBtn").onclick = () => {
+
   document.getElementById("intro").style.display = "none";
+
   document.getElementById("app").style.opacity = "1";
 };
 
-document.getElementById("startBtn").onclick = () => {
+// ================= START / PAUSE / RESET =================
+startBtn.onclick = () => {
+
+  // RESET ONLY AFTER END
+  if (year > 2100) {
+
+    resetSimulation();
+
+    return;
+  }
+
+  // NORMAL START/PAUSE
   running = !running;
+
+  startBtn.textContent = running
+    ? "⏸ Pause"
+    : "▶ Start";
 
   if (running) {
     step();
