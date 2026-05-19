@@ -11,6 +11,17 @@ const water = document.getElementById("water");
 let year = 2026;
 let running = false;
 
+// ================= SPEED CONTROL =================
+let simulationSpeed = 2000;
+
+const speedSlider = document.getElementById("speedSlider");
+const speedValue = document.getElementById("speedValue");
+
+speedSlider.addEventListener("input", () => {
+  simulationSpeed = Number(speedSlider.value);
+  speedValue.textContent = (simulationSpeed / 1000).toFixed(1);
+});
+
 // ================= SLIDES =================
 const images = [
   "images/intro/1.jpg",
@@ -76,9 +87,9 @@ function coralModel(temp) {
   let x = Math.min(1, heatStress / maxStress);
   let normalized = Math.pow(x, 1.6);
 
-  let mortality = normalized * 57;   // Max 57%
-  let survival = 100 - mortality;    // Will end ~43%
-  let cost = normalized * 1100;      // Economic damage up to $1.1B
+  let mortality = normalized * 57;
+  let survival = 100 - mortality;
+  let cost = normalized * 1100;
 
   return { mortality, survival, cost, normalized };
 }
@@ -139,12 +150,14 @@ function step() {
 
   // ================= CORAL VISUAL =================
   let intensity = mortality / 57;
+
   coralImg.style.filter = `
     saturate(${1 - intensity * 1.4})
     brightness(${1 - intensity * 0.5})
     contrast(${1 - intensity * 0.6})
     grayscale(${intensity * 0.5})
   `;
+
   coralImg.style.opacity = `${1 - intensity * 0.35}`;
 
   // ================= GRAPHS =================
@@ -158,7 +171,10 @@ function step() {
   tempChart.update();
 
   year++;
-  if (running) setTimeout(step, 2000);
+
+  if (running) {
+    setTimeout(step, simulationSpeed);
+  }
 }
 
 // ================= INTRO / START =================
@@ -169,5 +185,8 @@ document.getElementById("enterBtn").onclick = () => {
 
 document.getElementById("startBtn").onclick = () => {
   running = !running;
-  if (running) step();
+
+  if (running) {
+    step();
+  }
 };
