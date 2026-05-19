@@ -82,10 +82,10 @@ body{
 }
 
 .intro-url{
-  font-size:32px;      /* big font */
+  font-size:32px;
   font-weight:bold;
-  color:white;         /* white text */
-  margin-bottom:10px;  /* space between link and title */
+  color:white;
+  margin-bottom:10px;
   text-align:center;
 }
 
@@ -109,6 +109,19 @@ button{
   background:#38bdf8;
   font-weight:bold;
   cursor:pointer;
+}
+
+/* SPEED CONTROL */
+.speed-control{
+  margin-top:15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+
+#speedSlider{
+  width:220px;
 }
 
 .container{
