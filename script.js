@@ -158,7 +158,7 @@ function step() {
   tempChart.update();
 
   year++;
-  if (running) setTimeout(step, 500);
+  if (running) setTimeout(step, 2000);
 }
 
 // ================= INTRO / START =================
