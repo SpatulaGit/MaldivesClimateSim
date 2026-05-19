@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maldives Climate Simulator</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>Maldives Climate Change Simulator</h1>
+    <p>Interact with the future of the Maldives.</p>
+  </header>
+
+  <main>
+
+    <section class="controls">
+
+      <h2>Sea Level Rise</h2>
+
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="50"
+        id="seaSlider"
+      >
+
+      <p>
+        Sea Level Rise:
+        <span id="seaValue">0.5</span> meters
+      </p>
+
+      <div class="ocean">
+        <div id="water"></div>
+        <div class="island"></div>
+      </div>
+
+    </section>
+
+    <section class="info">
+
+      <div class="card">
+        <h2>Coral Reef Damage</h2>
+        <p id="coralText">
+          Coral mortality reaches 57%.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Economic Impact</h2>
+        <p id="moneyText">
+          Estimated damages: $1.1 Billion
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
