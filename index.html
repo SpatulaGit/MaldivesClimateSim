@@ -1,9 +1,10 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Maldives Climate Simulation</title>
+  <title>Maldives Climate Impact Simulation</title>
 
   <link rel="stylesheet" href="style.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,63 +19,81 @@
 
 <main class="container">
 
-  <!-- KEY DATA -->
+  <!-- LIVE DATA -->
   <section class="panel">
     <h2>Live Climate Indicators</h2>
-    <ul>
+
+    <ul class="stats">
       <li>Year: <span id="year">2026</span></li>
-      <li>Sea level: <span id="sea">0.55</span> m</li>
-      <li>Temperature: <span id="temp">28.0</span> °C</li>
-      <li>Coral survival: <span id="coral">100</span>%</li>
-      <li>Economic damage: <span id="cost">$0</span></li>
+      <li>Sea level rise: <span id="sea">0.55</span> m</li>
+      <li>Ocean temperature: <span id="temp">28.0</span> °C</li>
+      <li>Coral survival rate: <span id="coral">100</span>%</li>
+      <li>Economic damage: <span id="cost">$0M</span></li>
     </ul>
   </section>
 
   <!-- VISUAL -->
   <section class="panel">
+
     <div class="scene">
+
       <img src="images/main.png" class="bg"/>
       <img src="images/coral.png" id="coralLayer"/>
       <div id="water"></div>
+
     </div>
+
   </section>
 
-  <!-- ONLY 2 GRAPHS -->
+  <!-- GRAPHS -->
   <section class="panel">
+
     <h2>Sea Level Rise</h2>
     <canvas id="seaChart"></canvas>
 
-    <h2>Temperature</h2>
+    <h2>Ocean Temperature</h2>
     <canvas id="tempChart"></canvas>
+
   </section>
 
   <!-- SOURCES -->
   <section class="panel">
     <h2>Sources</h2>
-    <ul>
-        <li>IPCC AR6 (2021–2023) – Climate Change 2021: The Physical Science Basis (SSP scenarios, sea level rise, temperature projections)</li>
 
-    <li>NASA Global Climate Change – Global temperature datasets and long-term trends</li>
+    <ul class="sources">
 
-    <li>NOAA Sea Level Trends – Observed and projected sea level rise data</li>
+      <li>IPCC AR6 (2021–2023) – Climate Change 2021: The Physical Science Basis</li>
 
-    <li>Rahmstorf (2007) – Semi-empirical sea level rise modeling</li>
+      <li>NASA Global Climate Change – Global temperature datasets and long-term trends</li>
 
-    <li>Church & Clark (2013) – Sea level rise projections under emission scenarios</li>
+      <li>NOAA Sea Level Trends – Observed and projected sea level rise data</li>
 
-    <li>Springer Nature – Coral bleaching thresholds and thermal stress research</li>
+      <li>Rahmstorf (2007) – Semi-empirical sea level rise modeling</li>
 
-    <li>UNEP – Coral reef ecosystem vulnerability reports</li>
+      <li>Church & Clark (2013) – Sea level rise projections under emission scenarios</li>
 
-    <li>World Bank – Maldives climate risk and economic exposure assessments</li>
+      <li>Springer Nature – Coral bleaching thresholds and thermal stress research</li>
+
+      <li>UNEP – Coral reef ecosystem vulnerability reports</li>
+
+      <li>World Bank – Maldives climate risk and economic exposure assessments</li>
+
       <li>World Bank – Maldives Climate Risk Assessments</li>
+
       <li>IPCC AR6 – Sea Level Rise Projections</li>
+
       <li>USGS – Coral Reef Ecosystem Studies</li>
+
       <li>UNDP – Coastal Economic Impact Reports</li>
+
       <li>Springer Nature – Coral Bleaching & Thermal Stress</li>
+
       <li>MetLink – Island Elevation Data</li>
+
       <li>US Embassy – Tourism GDP Statistics</li>
+
       <li>NCA – Fisheries Economic Data</li>
+
     </ul>
   </section>
 

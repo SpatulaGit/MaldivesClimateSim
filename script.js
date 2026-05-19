@@ -1,3 +1,5 @@
+// script.js
+
 const yearEl = document.getElementById("year");
 const seaEl = document.getElementById("sea");
 const tempEl = document.getElementById("temp");
@@ -13,136 +15,207 @@ let running = false;
 const SEA_START = 0.55;
 const SEA_END = 0.90;
 
-const TEMP_START = 28;
+const TEMP_START = 28.0;
 const TEMP_END = 31.5;
 
 const YEARS = 74;
 
-/* =========================
-   🌊 VISUAL MODEL (LINEAR)
-========================= */
+/* VISUAL MODEL */
 function visualModel(t){
+
   return {
-    sea: SEA_START + (SEA_END - SEA_START) * t,
-    temp: TEMP_START + (TEMP_END - TEMP_START) * t
+
+    sea:
+      SEA_START +
+      (SEA_END - SEA_START) * t,
+
+    temp:
+      TEMP_START +
+      (TEMP_END - TEMP_START) * t
   };
 }
 
-/* =========================
-   📈 GRAPH MODEL (NONLINEAR)
-   (realistic acceleration)
-========================= */
+/* GRAPH MODEL */
 function graphModel(t){
-  let curved = t * t * (3 - 2 * t); // smoothstep baseline
-  let accel = Math.pow(curved, 1.6);
 
   return {
-    sea: SEA_START + (SEA_END - SEA_START) * accel,
-    temp: TEMP_START + (TEMP_END - TEMP_START) * Math.pow(t, 1.8)
+
+    sea:
+      SEA_START +
+      (SEA_END - SEA_START) *
+      Math.pow(t, 1.6),
+
+    temp:
+      TEMP_START +
+      (TEMP_END - TEMP_START) *
+      Math.pow(t, 1.8)
   };
 }
 
-/* =========================
-   🌊 WATER VISUAL
-========================= */
+/* WATER HEIGHT */
 function waterHeight(sea){
-  let p = (sea - SEA_START) / (SEA_END - SEA_START);
+
+  let p =
+    (sea - SEA_START) /
+    (SEA_END - SEA_START);
+
   return 38 + p * 25;
 }
 
-/* =========================
-   🪸 CORAL MODEL (FASTER + DARK BLEACHING)
-========================= */
+/* CORAL MODEL */
 function coralModel(temp){
-  let heatStress = Math.max(0, temp - 29);
 
-  // 🔥 faster bleaching (very visible now)
-  let bleaching = Math.min(100, heatStress * 55);
+  /* bleaching begins earlier */
+  let heatStress =
+    Math.max(0, temp - 28.5);
 
-  // 🪸 NEVER BELOW 5%
-  let survival = Math.max(5, 100 - bleaching);
+  /*
+    Evidence target:
+    ~57% mortality
+    at ~31.5°C
+  */
 
-  // 💰 economic damage
-  let cost = Math.min(1100, (bleaching / 100) * 1100);
+  let mortality =
+    Math.min(
+      57,
+      Math.pow(heatStress / 3.0, 1.9) * 57
+    );
 
-  return { bleaching, survival, cost };
+  /* survival directly tied */
+  let survival =
+    100 - mortality;
+
+  /* economic damage scaling */
+  let cost =
+    (mortality / 57) * 1100;
+
+  return {
+    mortality,
+    survival,
+    cost
+  };
 }
 
-/* =========================
-   💰 FORMAT MONEY
-========================= */
+/* MONEY */
 function formatMoney(m){
-  if(m >= 1000) return "$" + (m/1000).toFixed(2) + "B";
-  return "$" + m.toFixed(1) + "M";
+
+  return "$" +
+    m.toFixed(0) +
+    "M";
 }
 
-/* =========================
-   📊 CHARTS (NONLINEAR DATA)
-========================= */
-const seaChart = new Chart(document.getElementById("seaChart"), {
-  type:"line",
-  data:{ labels:[], datasets:[{
-    label:"Sea Level (m)",
-    data:[],
-    borderColor:"#38bdf8"
-  }]}
-});
+/* CHARTS */
 
-const tempChart = new Chart(document.getElementById("tempChart"), {
-  type:"line",
-  data:{ labels:[], datasets:[{
-    label:"Temperature (°C)",
-    data:[],
-    borderColor:"#f97316"
-  }]}
-});
+const seaChart =
+new Chart(
+  document.getElementById("seaChart"),
+  {
+    type:"line",
 
-/* =========================
-   🔁 MAIN LOOP
-========================= */
+    data:{
+      labels:[],
+
+      datasets:[{
+        label:"Sea Level Rise (m)",
+        data:[],
+        borderColor:"#38bdf8",
+        tension:0.3
+      }]
+    }
+  }
+);
+
+const tempChart =
+new Chart(
+  document.getElementById("tempChart"),
+  {
+    type:"line",
+
+    data:{
+      labels:[],
+
+      datasets:[{
+        label:"Ocean Temperature (°C)",
+        data:[],
+        borderColor:"#f97316",
+        tension:0.3
+      }]
+    }
+  }
+);
+
+/* MAIN LOOP */
+
 function step(){
 
   if(year > 2100) return;
 
-  let t = (year - 2026) / YEARS;
+  let t =
+    (year - 2026) / YEARS;
 
-  /* visual + graph split */
-  let vis = visualModel(t);
-  let graph = graphModel(t);
+  let vis =
+    visualModel(t);
 
-  let { survival, cost } = coralModel(vis.temp);
+  let graph =
+    graphModel(t);
+
+  let {
+    mortality,
+    survival,
+    cost
+  } = coralModel(vis.temp);
 
   /* UI */
-  yearEl.textContent = year;
-  seaEl.textContent = vis.sea.toFixed(2);
-  tempEl.textContent = vis.temp.toFixed(2);
 
-  coralEl.textContent = survival.toFixed(1);
-  costEl.textContent = formatMoney(cost);
+  yearEl.textContent =
+    year;
 
-  water.style.height = `${waterHeight(vis.sea)}%`;
+  seaEl.textContent =
+    vis.sea.toFixed(2);
+
+  tempEl.textContent =
+    vis.temp.toFixed(2);
+
+  coralEl.textContent =
+    survival.toFixed(1);
+
+  costEl.textContent =
+    formatMoney(cost);
+
+  /* WATER */
+
+  water.style.height =
+    `${waterHeight(vis.sea)}%`;
 
   /* =========================
-     🪸 STRONG BLEACHING VISUAL
+     IMPROVED END BLEACHING
   ========================= */
-  let intensity = Math.min(1, Math.max(0, (vis.temp - 29) / 1.5));
+
+  let intensity =
+    mortality / 100;
 
   coralImg.style.filter = `
-    saturate(${1 - intensity})
-    brightness(${1 - intensity * 0.4})
-    contrast(${1 - intensity * 0.6})
+    saturate(${1 - intensity * 1.4})
+    brightness(${1 - intensity * 0.45})
+    contrast(${1 - intensity * 0.55})
+    grayscale(${intensity * 0.45})
   `;
 
-  coralImg.style.opacity = `${1 - intensity * 0.7}`;
+  /* keeps some coral visible */
+  coralImg.style.opacity =
+    `${1 - intensity * 0.35}`;
 
-  /* =========================
-     📊 GRAPHS (NONLINEAR)
-  ========================= */
+  /* GRAPHS */
+
   seaChart.data.labels.push(year);
-  seaChart.data.datasets[0].data.push(graph.sea);
+
+  seaChart.data.datasets[0]
+    .data.push(graph.sea);
 
   tempChart.data.labels.push(year);
-  tempChart.data.datasets[0].data.push(graph.temp);
+
+  tempChart.data.datasets[0]
+    .data.push(graph.temp);
 
   seaChart.update();
   tempChart.update();
@@ -150,11 +223,18 @@ function step(){
   year++;
 
   if(running){
+
     setTimeout(step, 500);
   }
 }
 
-document.getElementById("startBtn").onclick = () => {
-  running = !running;
-  if(running) step();
+document
+  .getElementById("startBtn")
+  .onclick = () => {
+
+    running = !running;
+
+    if(running){
+      step();
+    }
 };
