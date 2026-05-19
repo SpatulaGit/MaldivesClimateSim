@@ -11,7 +11,7 @@ const water = document.getElementById("water");
 let year = 2026;
 let running = false;
 
-// ================= SLIDESHOW =================
+// ================= SLIDES =================
 const images = [
   "images/intro/1.jpg",
   "images/intro/2.jpg",
@@ -22,28 +22,24 @@ const images = [
 ];
 
 const slides = document.querySelectorAll(".slide");
-
 let index = 0;
 
 slides[0].style.backgroundImage = `url('${images[0]}')`;
 slides[1].style.backgroundImage = `url('${images[1]}')`;
-
 slides[0].classList.add("active");
 
-function nextSlide(){
-
+function nextSlide() {
   const active = index % 2;
   const next = (index + 1) % 2;
 
-  const nextImageIndex = (index + 1) % images.length;
+  const img = images[(index + 1) % images.length];
 
-  slides[next].style.backgroundImage =
-    `url('${images[nextImageIndex]}')`;
+  slides[next].style.backgroundImage = `url('${img}')`;
 
   slides[next].classList.add("active");
   slides[active].classList.remove("active");
 
-  index = nextImageIndex;
+  index++;
 }
 
 setInterval(nextSlide, 4000);
@@ -58,44 +54,37 @@ const TEMP_END = 31.5;
 const YEARS = 74;
 
 // ================= MODELS =================
-function visualModel(t){
+function visualModel(t) {
   return {
     sea: SEA_START + (SEA_END - SEA_START) * t,
     temp: TEMP_START + (TEMP_END - TEMP_START) * t
   };
 }
 
-function graphModel(t){
+function graphModel(t) {
   return {
     sea: SEA_START + (SEA_END - SEA_START) * Math.pow(t, 1.7),
     temp: TEMP_START + (TEMP_END - TEMP_START) * Math.pow(t, 1.4)
   };
 }
 
-// ================= CORAL =================
-function coralModel(temp){
-
+// ================= CORAL MODEL =================
+function coralModel(temp) {
   let heatStress = Math.max(0, temp - 28.5);
-
-  // normalize against MAX expected heat stress (not 3.2)
-  let maxStress = 3.0; // calibrated to your 2100 endpoint
+  let maxStress = 3.0;
 
   let x = Math.min(1, heatStress / maxStress);
-
-  // stronger curve so early years don't spike too fast
   let normalized = Math.pow(x, 1.6);
 
-  let mortality = normalized * 57;
-  let survival = 100 - mortality;
+  let mortality = normalized * 57;   // Max 57%
+  let survival = 100 - mortality;    // Will end ~43%
+  let cost = normalized * 1100;      // Economic damage up to $1.1B
 
-  // force exact economic endpoint alignment
-  let cost = normalized * 1100;
-
-  return { mortality, survival, cost };
+  return { mortality, survival, cost, normalized };
 }
 
 // ================= WATER =================
-function waterHeight(sea){
+function waterHeight(sea) {
   let p = (sea - SEA_START) / (SEA_END - SEA_START);
   return 38 + p * 25;
 }
@@ -128,35 +117,37 @@ const tempChart = new Chart(document.getElementById("tempChart"), {
 });
 
 // ================= LOOP =================
-function step(){
-
-  if(year > 2100) return;
+function step() {
+  if (year > 2100) return;
 
   let t = (year - 2026) / YEARS;
 
   let vis = visualModel(t);
   let graph = graphModel(t);
 
-  let { mortality, survival, cost } = coralModel(vis.temp);
+  let { mortality, survival, cost, normalized } = coralModel(vis.temp);
 
+  // ================= UI =================
   yearEl.textContent = year;
   seaEl.textContent = vis.sea.toFixed(2);
   tempEl.textContent = vis.temp.toFixed(2);
-
   coralEl.textContent = survival.toFixed(1);
   costEl.textContent = "$" + cost.toFixed(0) + "M";
 
+  // ================= WATER =================
   water.style.height = `${waterHeight(vis.sea)}%`;
 
+  // ================= CORAL VISUAL =================
   let intensity = mortality / 57;
-
   coralImg.style.filter = `
     saturate(${1 - intensity * 1.4})
     brightness(${1 - intensity * 0.5})
     contrast(${1 - intensity * 0.6})
     grayscale(${intensity * 0.5})
   `;
+  coralImg.style.opacity = `${1 - intensity * 0.35}`;
 
+  // ================= GRAPHS =================
   seaChart.data.labels.push(year);
   seaChart.data.datasets[0].data.push(graph.sea);
 
@@ -167,13 +158,10 @@ function step(){
   tempChart.update();
 
   year++;
-
-  if(running){
-    setTimeout(step, 500);
-  }
+  if (running) setTimeout(step, 500);
 }
 
-// ================= START =================
+// ================= INTRO / START =================
 document.getElementById("enterBtn").onclick = () => {
   document.getElementById("intro").style.display = "none";
   document.getElementById("app").style.opacity = "1";
@@ -181,5 +169,5 @@ document.getElementById("enterBtn").onclick = () => {
 
 document.getElementById("startBtn").onclick = () => {
   running = !running;
-  if(running) step();
+  if (running) step();
 };

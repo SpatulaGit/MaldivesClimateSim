@@ -11,7 +11,6 @@ body{
 }
 
 /* ================= INTRO ================= */
-
 #intro{
   position:fixed;
   inset:0;
@@ -82,8 +81,15 @@ body{
   z-index:2;
 }
 
-/* ================= APP ================= */
+.intro-url{
+  font-size:32px;      /* big font */
+  font-weight:bold;
+  color:white;         /* white text */
+  margin-bottom:10px;  /* space between link and title */
+  text-align:center;
+}
 
+/* ================= APP ================= */
 #app{
   opacity:0;
   transform:translateY(10px);
@@ -117,8 +123,6 @@ button{
   padding:20px;
   border-radius:14px;
 }
-
-/* ================= SCENE ================= */
 
 .scene{
   position:relative;

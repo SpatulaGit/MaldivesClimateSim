@@ -20,13 +20,16 @@
   </div>
 
   <div class="intro-content">
+    <!-- Link above title -->
+    <div class="intro-url">maldivesclimatesim.onrender.com</div>
+    
     <h1>Maldives Climate Impact Simulation</h1>
     <p>Rising seas • Coral bleaching • Economic risk</p>
     <button id="enterBtn">Enter Simulation</button>
   </div>
 
   <div class="intro-credit">
-    Source: Earth.org satellite imagery (Maldives)
+    Source: Adobe Stock
   </div>
 
 </div>
@@ -41,9 +44,9 @@
 
 <main class="container">
 
+  <!-- DATA -->
   <section class="panel">
     <h2>Live Climate Indicators</h2>
-
     <ul class="stats">
       <li>Year: <span id="year">2026</span></li>
       <li>Sea level: <span id="sea">0.55</span> m</li>
@@ -53,28 +56,26 @@
     </ul>
   </section>
 
+  <!-- VISUAL -->
   <section class="panel">
     <div class="scene">
-
       <img src="images/main.png" class="bg"/>
       <img src="images/coral.png" id="coralLayer"/>
-
       <div id="water"></div>
-
     </div>
   </section>
 
+  <!-- GRAPHS -->
   <section class="panel">
     <h2>Sea Level Rise</h2>
     <canvas id="seaChart"></canvas>
-
     <h2>Ocean Temperature</h2>
     <canvas id="tempChart"></canvas>
   </section>
 
+  <!-- SOURCES -->
   <section class="panel">
     <h2>Sources</h2>
-
     <ul>
       <li>IPCC AR6 Climate Report</li>
       <li>NASA Global Climate Data</li>
@@ -87,7 +88,6 @@
       <li>US Embassy Maldives Economic Data</li>
       <li>NCA Fisheries Economic Contribution</li>
     </ul>
-
   </section>
 
 </main>
@@ -95,6 +95,5 @@
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
