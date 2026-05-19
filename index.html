@@ -20,9 +20,8 @@
   </div>
 
   <div class="intro-content">
-    <!-- Link above title -->
     <div class="intro-url">maldivesclimatesim.onrender.com</div>
-    
+
     <h1>Maldives Climate Impact Simulation</h1>
     <p>Rising seas • Coral bleaching • Economic risk</p>
     <button id="enterBtn">Enter Simulation</button>
@@ -39,7 +38,25 @@
 
 <header>
   <h1>Maldives Climate Impact Simulation (2026–2100)</h1>
+
   <button id="startBtn">▶ Start / Pause</button>
+
+  <!-- SPEED SLIDER -->
+  <div class="speed-control">
+    <label for="speedSlider">
+      Simulation Speed:
+      <span id="speedValue">2.0</span>s
+    </label>
+
+    <input
+      type="range"
+      id="speedSlider"
+      min="200"
+      max="4000"
+      step="100"
+      value="2000"
+    />
+  </div>
 </header>
 
 <main class="container">
@@ -69,6 +86,7 @@
   <section class="panel">
     <h2>Sea Level Rise</h2>
     <canvas id="seaChart"></canvas>
+
     <h2>Ocean Temperature</h2>
     <canvas id="tempChart"></canvas>
   </section>
