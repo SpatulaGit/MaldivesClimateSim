@@ -2,74 +2,76 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Arial, sans-serif;
+  font-family:Arial;
 }
 
 body{
-  background:#e6f7ff;
-  color:#222;
+  background:#050b1a;
+  color:white;
 }
 
 header{
-  background:#0077b6;
-  color:white;
   text-align:center;
-  padding:40px;
+  padding:20px;
+  background:#0f172a;
 }
 
-main{
-  padding:40px;
+button{
+  margin-top:10px;
+  padding:10px 18px;
+  background:#38bdf8;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-.controls{
-  background:white;
-  padding:30px;
+.container{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  padding:20px;
+}
+
+.panel{
+  background:#111827;
+  padding:20px;
   border-radius:15px;
-  margin-bottom:30px;
 }
 
-input[type="range"]{
-  width:100%;
-  margin:20px 0;
-}
-
-.ocean{
+.scene{
   position:relative;
   width:100%;
-  height:300px;
-  background:#90e0ef;
-  border-radius:15px;
-  overflow:hidden;
-  margin-top:20px;
+  max-width:1200px;
+}
+
+.bg{
+  width:100%;
+  display:block;
 }
 
 #water{
   position:absolute;
+  left:0;
   bottom:0;
   width:100%;
-  height:50%;
-  background:#0077b6;
-  transition:1s;
+  height:38%;
+  background:rgba(0,120,200,0.45);
+  transition:height 0.4s ease;
 }
 
-.island{
+#coralLayer{
   position:absolute;
-  bottom:50%;
-  left:40%;
-  width:150px;
-  height:40px;
-  background:#c2b280;
-  border-radius:50px;
+  left:0;
+  bottom:0;
+  width:100%;
+  pointer-events:none;
+  transition: filter 0.3s ease, opacity 0.3s ease;
 }
 
-.info{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-}
-
-.card{
-  background:white;
-  padding:25px;
-  border-radius:15px;
+canvas{
+  background:#0b1220;
+  margin-top:10px;
+  border-radius:10px;
+  padding:10px;
 }
